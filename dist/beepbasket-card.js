@@ -349,7 +349,13 @@ _build() {
           <ha-textfield label="Quantity" id="quantityField" value="${suggestedData.quantity || ''}" placeholder="Optional"></ha-textfield>
           <ha-textfield label="Stores" id="storesField" value="${suggestedData.stores || ''}" placeholder="Optional"></ha-textfield>
           <ha-textfield label="Brands" id="brandsField" value="${suggestedData.brands || ''}" placeholder="Optional"></ha-textfield>
-          ${showAutoFill ? '<div style="font-size: 0.85em; color: var(--success-color); padding: 12px; background: rgba(0,255,0,0.1); border-radius: 4px; margin-top: 8px;">Auto-filled from OpenFoodFacts</div>' : ''}
+          
+          <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+            <ha-checkbox id="addToListCheckbox" checked></ha-checkbox>
+            <label for="addToListCheckbox" style="font-size: 0.95em; cursor: pointer;">Add to shopping list immediately</label>
+          </div>
+
+          ${showAutoFill ? '<div style="font-size: 0.85em; color: var(--success-color); padding: 12px; background: rgba(0,255,0,0.1); border-radius: 4px;">Auto-filled from OpenFoodFacts</div>' : ''}
         </div>
       `,
       async (dialog) => {
@@ -357,10 +363,12 @@ _build() {
         const quantityField = dialog.querySelector('#quantityField');
         const storesField = dialog.querySelector('#storesField');
         const brandsField = dialog.querySelector('#brandsField');
+        const addToListCheckbox = dialog.querySelector('#addToListCheckbox');
 
         const name = nameField.value.trim();
         if (!name) return BeepBasketUI.showToast(this, 'Name required', true);
 
+        // 1. Add product mapping to BeepBasket backend
         await this._hass.callService('beepbasket', 'add_mapping', {
           code: barcode,
           product_name: name,
@@ -368,7 +376,23 @@ _build() {
           quantity: quantityField.value.trim(),
           stores: storesField.value.trim(),
         });
-        BeepBasketUI.showToast(this, 'Product added');
+
+        // 2. Auto add to shopping list if checked
+        let addedToList = false;
+        if (addToListCheckbox && addToListCheckbox.checked) {
+          try {
+            await this._hass.callService('shopping_list', 'add_item', { name });
+            addedToList = true;
+          } catch (err) {
+            console.warn('Failed to auto-add to shopping list:', err);
+          }
+        }
+
+        BeepBasketUI.showToast(
+          this, 
+          addedToList ? '🛒 Added product & sent to shopping list!' : 'Product added'
+        );
+        
         this._barcodeField.value = '';
         this._debouncedRefresh();
       },
