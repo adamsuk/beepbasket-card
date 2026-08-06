@@ -54,7 +54,7 @@ window.BeepBasketUI = {
       cancelBtn.type = "button";
       cancelBtn.innerText = cancelText;
       cancelBtn.addEventListener("click", () => {
-        dialog.close();
+        dialog.open = false;
         resolve(dialog);
       });
 
@@ -70,7 +70,7 @@ window.BeepBasketUI = {
           BeepBasketUI.showToast(card, `Error: ${e.message || e.body?.message || e}`, true);
           return;
         }
-        dialog.close();
+        dialog.open = false;
         resolve(dialog);
       });
 

@@ -31,13 +31,8 @@ window.BeepBasketCamera = {
     okBtn.slot = "footer";
     okBtn.innerText = "Start Camera";
     okBtn.addEventListener("click", () => this._startCamera(card, dialog));
-    
-    const closeBtn = document.createElement("ha-button");
-    closeBtn.slot = "footer";
-    closeBtn.innerText = "Close";
-    closeBtn.addEventListener("click", () => dialog.close());
-    
-    dialog.append(okBtn, closeBtn);
+
+    dialog.append(okBtn);
     document.body.appendChild(dialog);
     dialog.open = true;
   },
@@ -70,7 +65,7 @@ window.BeepBasketCamera = {
             card._barcodeField.value = result.text;
             setTimeout(() => {
               card._addQuick();
-              dialog.close();
+              dialog.open = false;
             }, 500);
             BeepBasketUI.showToast(card, `📷 Scanned: ${result.text}`);
           }
