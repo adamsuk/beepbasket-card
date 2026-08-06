@@ -102,10 +102,10 @@ window.BeepBasketTable = {
           try {
             const productName = data[barcode]?.name || data[barcode]?.product || 'Unknown';
             await card._hass.callService('shopping_list', 'add_item', { name: productName });
-            BarcodeUI.showToast(card, '🛒 Added to shopping list');
+            BeepBasketUI.showToast(card, '🛒 Added to shopping list');
             await card._debouncedRefresh();
           } catch (err) {
-            BarcodeUI.showToast(card, `Error: ${err.message || err.body?.message || err}`, true);
+            BeepBasketUI.showToast(card, `Error: ${err.message || err.body?.message || err}`, true);
           }
         } else if (action === 'edit') {
           card._showEditDialog(barcode, data[barcode]);

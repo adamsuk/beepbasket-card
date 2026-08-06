@@ -72,7 +72,7 @@ window.BeepBasketCamera = {
               card._addQuick();
               dialog.close();
             }, 500);
-            BarcodeUI.showToast(card, `📷 Scanned: ${result.text}`);
+            BeepBasketUI.showToast(card, `📷 Scanned: ${result.text}`);
           }
         },
         {
@@ -100,7 +100,7 @@ window.BeepBasketCamera = {
     } catch (e) {
       console.error = originalConsoleError;
       status.textContent = "Camera failed";
-      BarcodeUI.showToast(card, "Camera error", true);
+      BeepBasketUI.showToast(card, "Camera error", true);
     }
   }
 };

@@ -67,7 +67,7 @@ window.BeepBasketUI = {
         try {
           await onConfirm(dialog);
         } catch (e) {
-          BarcodeUI.showToast(card, `Error: ${e.message || e.body?.message || e}`, true);
+          BeepBasketUI.showToast(card, `Error: ${e.message || e.body?.message || e}`, true);
           return;
         }
         dialog.close();
