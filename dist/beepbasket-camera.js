@@ -22,7 +22,7 @@ window.BeepBasketCamera = {
       <video id="scannerVideo" autoplay playsinline muted 
              style="width: 100%; max-width: 400px; border-radius: 8px; background: #000; display: block;"></video>
       <div id="scannerStatus" style="margin-top: 1em; font-size: 0.9em; color: var(--secondary-text-color);">
-        Click OK to start camera
+        Click Start Camera to begin
       </div>
     `;
     dialog.appendChild(content);
@@ -31,8 +31,8 @@ window.BeepBasketCamera = {
     okBtn.slot = "footer";
     okBtn.innerText = "Start Camera";
     okBtn.addEventListener("click", () => this._startCamera(card, dialog));
+    dialog.appendChild(okBtn);
 
-    dialog.append(okBtn);
     document.body.appendChild(dialog);
     dialog.open = true;
   },
@@ -42,22 +42,13 @@ window.BeepBasketCamera = {
     const status = dialog.querySelector("#scannerStatus");
     
     try {
-      // ZXing handles stream + scanning in ONE call
       const codeReader = new ZXing.BrowserMultiFormatReader();
-      
-      // Silence ZXing noise
-      const originalConsoleError = console.error;
-      console.error = () => {};
-      
       status.textContent = "Starting camera...";
       
-      // ✅ THIS WORKS - ZXing manages everything
       codeReader.decodeFromVideoDevice(
         null, 
         video,
         (result, err) => {
-          console.error = originalConsoleError;
-          
           if (result) {
             console.log('✅ SCANNED:', result.text);
             status.textContent = `✅ Found: ${result.text}`;
@@ -68,6 +59,15 @@ window.BeepBasketCamera = {
               dialog.open = false;
             }, 500);
             BeepBasketUI.showToast(card, `📷 Scanned: ${result.text}`);
+          }
+
+          // Clean error filter (suppresses frame miss noise without breaking global console)
+          if (err) {
+            const errName = err?.name || err?.constructor?.name || '';
+            const errMsg = err?.message || '';
+            if (!errName.includes('NotFound') && !errMsg.includes('non-ReaderException')) {
+              console.warn('ZXing Camera Warning:', err);
+            }
           }
         },
         {
@@ -86,14 +86,13 @@ window.BeepBasketCamera = {
       // Cleanup
       dialog.addEventListener('closed', () => {
         codeReader.reset();
-        console.error = originalConsoleError;
         if (video.srcObject) {
           video.srcObject.getTracks().forEach(track => track.stop());
         }
+        dialog.remove();
       }, { once: true });
       
     } catch (e) {
-      console.error = originalConsoleError;
       status.textContent = "Camera failed";
       BeepBasketUI.showToast(card, "Camera error", true);
     }
