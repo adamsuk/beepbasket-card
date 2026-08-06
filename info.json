@@ -1,6 +1,6 @@
 {
   "name": "Beepbasket Card",
   "content_type": "lovelace",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "homeassistant": "2024.12.0"
 }

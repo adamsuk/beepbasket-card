@@ -22,19 +22,16 @@ window.BeepBasketCamera = {
       <video id="scannerVideo" autoplay playsinline muted 
              style="width: 100%; max-width: 400px; border-radius: 8px; background: #000; display: block;"></video>
       <div id="scannerStatus" style="margin-top: 1em; font-size: 0.9em; color: var(--secondary-text-color);">
-        Click Start Camera to begin
+        Starting camera...
       </div>
     `;
     dialog.appendChild(content);
-    
-    const okBtn = document.createElement("ha-button");
-    okBtn.slot = "footer";
-    okBtn.innerText = "Start Camera";
-    okBtn.addEventListener("click", () => this._startCamera(card, dialog));
-    dialog.appendChild(okBtn);
 
     document.body.appendChild(dialog);
     dialog.open = true;
+
+    // 🚀 AUTO-START CAMERA IMMEDIATELY
+    this._startCamera(card, dialog);
   },
 
   async _startCamera(card, dialog) {
@@ -43,7 +40,6 @@ window.BeepBasketCamera = {
     
     try {
       const codeReader = new ZXing.BrowserMultiFormatReader();
-      status.textContent = "Starting camera...";
       
       codeReader.decodeFromVideoDevice(
         null, 
@@ -61,7 +57,6 @@ window.BeepBasketCamera = {
             BeepBasketUI.showToast(card, `📷 Scanned: ${result.text}`);
           }
 
-          // Clean error filter (suppresses frame miss noise without breaking global console)
           if (err) {
             const errName = err?.name || err?.constructor?.name || '';
             const errMsg = err?.message || '';
@@ -83,7 +78,6 @@ window.BeepBasketCamera = {
       
       status.textContent = "📷 Point barcode at camera";
       
-      // Cleanup
       dialog.addEventListener('closed', () => {
         codeReader.reset();
         if (video.srcObject) {
