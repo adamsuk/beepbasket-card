@@ -28,12 +28,12 @@ window.BeepBasketCamera = {
     dialog.appendChild(content);
     
     const okBtn = document.createElement("ha-button");
-    okBtn.slot = "primaryAction";
+    okBtn.slot = "footer";
     okBtn.innerText = "Start Camera";
     okBtn.addEventListener("click", () => this._startCamera(card, dialog));
     
     const closeBtn = document.createElement("ha-button");
-    closeBtn.slot = "secondaryAction";
+    closeBtn.slot = "footer";
     closeBtn.innerText = "Close";
     closeBtn.addEventListener("click", () => dialog.close());
     

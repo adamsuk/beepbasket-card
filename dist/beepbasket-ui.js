@@ -49,7 +49,7 @@ window.BeepBasketUI = {
       dialog.appendChild(content);
 
       const cancelBtn = document.createElement("ha-button");
-      cancelBtn.slot = "secondaryAction";
+      cancelBtn.slot = "footer";
       cancelBtn.variant = "primary";
       cancelBtn.type = "button";
       cancelBtn.innerText = cancelText;
@@ -59,7 +59,7 @@ window.BeepBasketUI = {
       });
 
       const confirmBtn = document.createElement("ha-button");
-      confirmBtn.slot = "primaryAction";
+      confirmBtn.slot = "footer";
       confirmBtn.variant = isDanger ? "danger" : "primary";
       confirmBtn.type = "button";
       confirmBtn.innerText = confirmText;
